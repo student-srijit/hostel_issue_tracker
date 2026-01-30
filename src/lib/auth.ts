@@ -131,6 +131,10 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Your account has been deactivated");
         }
 
+        if (!user.password) {
+          throw new Error("Invalid email or password");
+        }
+
         const isMatch = await bcrypt.compare(credentials.password, user.password);
 
         if (!isMatch) {

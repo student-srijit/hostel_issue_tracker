@@ -13,6 +13,7 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '10mb',
     },
+    workerThreads: true,
   },
   webpack: (config) => {
     config.externals.push({

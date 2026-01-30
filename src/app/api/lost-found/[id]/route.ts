@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import mongoose from "mongoose";
 import dbConnect from "@/lib/db";
 import LostFound from "@/models/LostFound";
 import { getServerSession } from "next-auth";
@@ -12,7 +13,7 @@ export async function GET(
     await dbConnect();
 
     const item = await LostFound.findById(params.id)
-      .populate("reportedBy", "name email hostel room")
+      .populate("reporter", "name email hostel room")
       .populate("claimedBy", "name email")
       .lean();
 
@@ -71,11 +72,11 @@ export async function PATCH(
       }
 
       item.status = "claimed";
-      item.claimedBy = session.user.id;
+      item.claimedBy = new mongoose.Types.ObjectId(session.user.id);
       item.claimedAt = new Date();
       await item.save();
 
-      await item.populate("reportedBy", "name email hostel room");
+      await item.populate("reporter", "name email hostel room");
       await item.populate("claimedBy", "name email");
 
       return NextResponse.json(item);
@@ -94,7 +95,7 @@ export async function PATCH(
 
       // Only owner or management can update status
       if (
-        item.reportedBy.toString() !== session.user.id &&
+        item.reporter.toString() !== session.user.id &&
         session.user.role !== "management"
       ) {
         return NextResponse.json(
@@ -106,7 +107,7 @@ export async function PATCH(
       item.status = updateData.status;
       await item.save();
 
-      await item.populate("reportedBy", "name email hostel room");
+      await item.populate("reporter", "name email hostel room");
 
       return NextResponse.json(item);
     }
@@ -123,7 +124,7 @@ export async function PATCH(
 
     // Only owner or management can update
     if (
-      item.reportedBy.toString() !== session.user.id &&
+      item.reporter.toString() !== session.user.id &&
       session.user.role !== "management"
     ) {
       return NextResponse.json(
@@ -147,7 +148,7 @@ export async function PATCH(
       },
       { new: true }
     )
-      .populate("reportedBy", "name email hostel room")
+      .populate("reporter", "name email hostel room")
       .populate("claimedBy", "name email");
 
     return NextResponse.json(updatedItem);
@@ -187,7 +188,7 @@ export async function DELETE(
 
     // Only owner or management can delete
     if (
-      item.reportedBy.toString() !== session.user.id &&
+      item.reporter.toString() !== session.user.id &&
       session.user.role !== "management"
     ) {
       return NextResponse.json(
