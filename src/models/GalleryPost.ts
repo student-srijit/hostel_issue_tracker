@@ -81,7 +81,7 @@ const galleryPostSchema = new Schema<IGalleryPost>(
       },
     ],
   },
-  { timestamps: true, strictPopulate: false }
+  { timestamps: true }
 );
 
 const existingModel = mongoose.models.GalleryPost as mongoose.Model<IGalleryPost> | undefined;
@@ -121,7 +121,6 @@ if (existingModel) {
       ],
     });
   }
-  existingSchema.set("strictPopulate", false);
 }
 
 const GalleryPost = existingModel || mongoose.model<IGalleryPost>("GalleryPost", galleryPostSchema);
