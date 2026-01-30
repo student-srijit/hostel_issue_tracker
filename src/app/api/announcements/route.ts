@@ -38,6 +38,7 @@ export async function GET(request: NextRequest) {
     const [announcements, total] = await Promise.all([
       Announcement.find(query)
         .populate("createdBy", "name email role avatar isVerified")
+        .populate("author", "name email role avatar isVerified")
         .sort({ isPinned: -1, createdAt: -1 })
         .skip(skip)
         .limit(limit)

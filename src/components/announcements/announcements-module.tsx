@@ -328,6 +328,7 @@ interface AnnouncementItem {
   priority?: string;
   createdAt: string | Date;
   createdBy?: { name?: string; avatar?: string; role?: string; isVerified?: boolean };
+  author?: { name?: string; avatar?: string; role?: string; isVerified?: boolean };
   isPinned?: boolean;
   views?: number;
   likes?: number;
@@ -346,11 +347,12 @@ interface AnnouncementCardProps {
 
 function AnnouncementCard({ announcement, onLike, isStaff }: AnnouncementCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const authorBadge = announcement.createdBy?.role === "management"
+  const author = announcement.createdBy || announcement.author;
+  const authorBadge = author?.role === "management"
     ? "Management Announcement"
-    : announcement.createdBy?.isVerified
+    : author?.isVerified
       ? "Verified Hosteler"
-      : announcement.createdBy?.role === "maintenance"
+      : author?.role === "maintenance"
         ? "Staff"
         : null;
 
@@ -478,10 +480,10 @@ function AnnouncementCard({ announcement, onLike, isStaff }: AnnouncementCardPro
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
                 <Avatar className="h-6 w-6">
-                  <AvatarImage src={announcement.createdBy?.avatar || ""} />
-                  <AvatarFallback>{announcement.createdBy?.name?.[0] || "U"}</AvatarFallback>
+                  <AvatarImage src={author?.avatar || ""} />
+                  <AvatarFallback>{author?.name?.[0] || "U"}</AvatarFallback>
                 </Avatar>
-                <span>{announcement.createdBy?.name || "Unknown"}</span>
+                <span>{author?.name || "Unknown"}</span>
                 {authorBadge && (
                   <Badge variant="secondary" className="text-[10px]">
                     {authorBadge}

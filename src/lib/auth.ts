@@ -50,7 +50,25 @@ export const authOptions: NextAuthOptions = {
   useSecureCookies: false,
   cookies: {
     sessionToken: {
-      name: "next-auth.session-token",
+      name: "hostelhub.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: false,
+      },
+    },
+    callbackUrl: {
+      name: "hostelhub.callback-url",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: false,
+      },
+    },
+    csrfToken: {
+      name: "hostelhub.csrf-token",
       options: {
         httpOnly: true,
         sameSite: "lax",
@@ -107,7 +125,6 @@ export const authOptions: NextAuthOptions = {
             id: ensuredUser._id.toString(),
             email: ensuredUser.email,
             name: ensuredUser.name,
-            image: ensuredUser.avatar,
             role: ensuredUser.role,
             isVerified: ensuredUser.isVerified,
             studentId: ensuredUser.studentId,
@@ -148,7 +165,6 @@ export const authOptions: NextAuthOptions = {
           id: user._id.toString(),
           email: user.email,
           name: user.name,
-          image: user.avatar,
           role: user.role,
           isVerified: user.isVerified,
           studentId: user.studentId,
@@ -175,9 +191,21 @@ export const authOptions: NextAuthOptions = {
         token.room = user.room;
       }
 
-      // Handle session update
-      if (trigger === "update" && session) {
-        token = { ...token, ...session };
+      if ("picture" in token) {
+        delete (token as { picture?: string }).picture;
+      }
+
+      // Handle session update (whitelist fields only)
+      if (trigger === "update" && session?.user) {
+        token.id = session.user.id ?? token.id;
+        token.role = session.user.role ?? token.role;
+        token.isVerified = session.user.isVerified ?? token.isVerified;
+        token.studentId = session.user.studentId ?? token.studentId;
+        token.college = session.user.college ?? token.college;
+        token.hostel = session.user.hostel ?? token.hostel;
+        token.block = session.user.block ?? token.block;
+        token.floor = session.user.floor ?? token.floor;
+        token.room = session.user.room ?? token.room;
       }
 
       return token;
