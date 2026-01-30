@@ -10,6 +10,12 @@ export interface IGalleryPost extends Document {
   hostel: string;
   college?: string;
   publicId?: string;
+  likes: mongoose.Types.ObjectId[];
+  comments: Array<{
+    user: mongoose.Types.ObjectId;
+    comment: string;
+    createdAt: Date;
+  }>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -49,10 +55,75 @@ const galleryPostSchema = new Schema<IGalleryPost>(
     publicId: {
       type: String,
     },
+    likes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    comments: [
+      {
+        user: {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        comment: {
+          type: String,
+          required: true,
+          maxlength: 500,
+          trim: true,
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
-  { timestamps: true }
+  { timestamps: true, strictPopulate: false }
 );
 
-const GalleryPost = mongoose.models.GalleryPost || mongoose.model<IGalleryPost>("GalleryPost", galleryPostSchema);
+const existingModel = mongoose.models.GalleryPost as mongoose.Model<IGalleryPost> | undefined;
+
+if (existingModel) {
+  const existingSchema = existingModel.schema;
+  if (!existingSchema.path("likes")) {
+    existingSchema.add({
+      likes: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+        },
+      ],
+    });
+  }
+  if (!existingSchema.path("comments")) {
+    existingSchema.add({
+      comments: [
+        {
+          user: {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+          },
+          comment: {
+            type: String,
+            required: true,
+            maxlength: 500,
+            trim: true,
+          },
+          createdAt: {
+            type: Date,
+            default: Date.now,
+          },
+        },
+      ],
+    });
+  }
+  existingSchema.set("strictPopulate", false);
+}
+
+const GalleryPost = existingModel || mongoose.model<IGalleryPost>("GalleryPost", galleryPostSchema);
 
 export default GalleryPost;

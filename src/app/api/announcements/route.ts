@@ -19,10 +19,6 @@ export async function GET(request: NextRequest) {
 
     const query: any = { isPublished: true };
 
-    if (session?.user?.college) {
-      query.college = session.user.college;
-    }
-    
     // Filter by hostel or global
     if (hostel) {
       query.$or = [{ hostel }, { hostel: "all" }];

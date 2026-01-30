@@ -110,9 +110,7 @@ export function AnnouncementsModule({ showCreateButton = true, onlyMine = false 
       setIsLoading(true);
       setLoadError(null);
       try {
-        const hostel = session?.user?.hostel;
         const params = new URLSearchParams();
-        if (hostel) params.set("hostel", hostel);
         if (onlyMine) params.set("onlyMine", "true");
         const url = params.toString()
           ? `/api/announcements?${params.toString()}`
@@ -348,10 +346,10 @@ interface AnnouncementCardProps {
 
 function AnnouncementCard({ announcement, onLike, isStaff }: AnnouncementCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const authorBadge = announcement.createdBy?.isVerified
-    ? "Verified Hosteler"
-    : announcement.createdBy?.role === "management"
-      ? "Verified"
+  const authorBadge = announcement.createdBy?.role === "management"
+    ? "Management Announcement"
+    : announcement.createdBy?.isVerified
+      ? "Verified Hosteler"
       : announcement.createdBy?.role === "maintenance"
         ? "Staff"
         : null;

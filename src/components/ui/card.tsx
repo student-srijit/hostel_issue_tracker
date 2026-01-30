@@ -12,7 +12,7 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border bg-card text-card-foreground shadow-sm transition-all duration-300",
+      "group card-neon card-tilt scroll-fade rounded-xl border bg-card text-card-foreground shadow-sm transition-all duration-300",
       glass && "bg-white/60 dark:bg-gray-800/60 backdrop-blur-lg border-white/30 dark:border-gray-700/30",
       hover && "hover:shadow-lg hover:-translate-y-1 cursor-pointer",
       gradient === "primary" && "bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border-blue-200/50 dark:border-blue-800/50",

@@ -32,10 +32,6 @@ export async function GET(request: NextRequest) {
     // Build query
     const query: Record<string, unknown> = {};
 
-    if (session?.user?.college) {
-      query.college = session.user.college;
-    }
-
     // Only show public issues for non-authenticated users
     if (!session?.user) {
       query.isPublic = true;

@@ -55,11 +55,17 @@ export function AppShell({ children, title }: AppShellProps) {
               </Button>
             </Link>
             {session?.user && (
-              <UserAvatar
-                name={session.user.name || "User"}
-                image={session.user.image}
-                size="sm"
-              />
+              <Link
+                href="/profile"
+                className="rounded-full ring-offset-background transition hover:ring-2 hover:ring-purple-500/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60"
+                aria-label="Open profile"
+              >
+                <UserAvatar
+                  name={session.user.name || "User"}
+                  image={session.user.image}
+                  size="sm"
+                />
+              </Link>
             )}
           </div>
         </div>

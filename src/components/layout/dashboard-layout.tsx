@@ -68,7 +68,6 @@ const managementNavItems: NavItem[] = [
   { title: "Staff", href: "/management/staff", icon: <Users className="h-5 w-5" /> },
   { title: "Announcements", href: "/management/announcements", icon: <Megaphone className="h-5 w-5" /> },
   { title: "Lost & Found", href: "/management/lost-found", icon: <Package className="h-5 w-5" /> },
-  { title: "QR Codes", href: "/management/qr-codes", icon: <QrCode className="h-5 w-5" /> },
   { title: "Leaderboard", href: "/management/leaderboard", icon: <Award className="h-5 w-5" /> },
 ];
 
