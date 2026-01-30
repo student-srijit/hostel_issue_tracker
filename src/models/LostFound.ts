@@ -20,6 +20,8 @@ export interface ILostFoundItem extends Document {
   contactDetails?: string;
   views: number;
   status: "active" | "claimed" | "returned" | "expired";
+  claimedBy?: mongoose.Types.ObjectId;
+  claimedAt?: Date;
   claims: {
     claimant: mongoose.Types.ObjectId;
     message: string;
@@ -125,6 +127,13 @@ const lostFoundSchema = new Schema<ILostFoundItem>(
       type: String,
       enum: ["active", "claimed", "returned", "expired"],
       default: "active",
+    },
+    claimedBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+    claimedAt: {
+      type: Date,
     },
     views: {
       type: Number,
