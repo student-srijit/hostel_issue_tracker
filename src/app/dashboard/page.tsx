@@ -11,6 +11,14 @@ export default async function DashboardPage() {
     redirect("/auth/login");
   }
 
+  if (session.user.role === "management") {
+    redirect("/management/dashboard");
+  }
+
+  if (session.user.role === "maintenance") {
+    redirect("/maintenance/dashboard");
+  }
+
   return (
     <DashboardLayout>
       <StudentDashboard />

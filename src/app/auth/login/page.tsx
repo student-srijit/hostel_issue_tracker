@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
-import { useSession, signIn, getSession } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import {
   Zap,
   Shield,
@@ -75,7 +75,7 @@ const features = [
 function LoginPageInner() {
   const searchParams = useSearchParams();
   const { data: session, status } = useSession();
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [activeFeature, setActiveFeature] = useState(0);
@@ -114,6 +114,7 @@ function LoginPageInner() {
       const result = await signIn("credentials", {
         email: data.email,
         password: data.password,
+        callbackUrl,
         redirect: false,
       });
 
@@ -121,36 +122,8 @@ function LoginPageInner() {
         toast.error(result.error);
         setIsLoading(false);
       } else if (result?.ok) {
-        let sessionData = null;
-        for (let i = 0; i < 6; i += 1) {
-          sessionData = await getSession();
-          if (sessionData?.user) break;
-          await new Promise((resolve) => setTimeout(resolve, 350));
-        }
-
-        if (!sessionData?.user) {
-          const isVsCodePreview = /vscode/i.test(navigator.userAgent);
-          toast.error(
-            isVsCodePreview
-              ? "Session cookies are blocked in the VS Code preview. Open in a normal browser and try again."
-              : "Login succeeded but session was not created. Please refresh and try again."
-          );
-          if (isVsCodePreview) {
-            window.open("http://localhost:3000/auth/login", "_blank");
-          }
-          setIsLoading(false);
-          return;
-        }
-
-        const target =
-          sessionData.user.role === "management"
-            ? "/management/dashboard"
-            : sessionData.user.role === "maintenance"
-              ? "/maintenance/dashboard"
-              : callbackUrl;
-
         toast.success("Welcome back!");
-        window.location.href = target;
+        window.location.href = callbackUrl;
       }
     } catch (error) {
       toast.error("An unexpected error occurred");
